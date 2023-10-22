@@ -1,0 +1,65 @@
+*********************************************
+************** TINKER ***********************
+*********************************************
+php artisan serve - Roda a aplicação
+php artisan make:controller - Cria um novo controller
+php artisan make:model <nome> - Cria um novo modelo
+php artisan make:migration create_clientes_table - Cria uma nova migration
+php artisan migrate - Executa as migrations
+php artisan migrate:rollback --step=3 - Retorna 3 passos das migrations
+php artisan migrate:status - Verifica os status de todas as migrations
+php artisan migrate:reset - Dá rollback em todas as migrations
+php artisan migrate:refresh - Dá um reset e um migrate logo em seguida
+php artisan migrate:fresh - Dá um drop em todas as tabelas e executa o migrate
+php artisan tinker - Permite manipular os Models do sistema e o ORM
+php artisan db:seed --class=MotivoContatoSeeder - Executa um Seed no banco de dados
+php artisan make:middleware - Cria uma nova middleware
+php artisan make:controller --resource ProdutoController --model=Produto - Cria um novo controlador seguindo os métodos de convenção: index(), store(), destroy(), etc.
+php artisan route:list - Lista rotas disponíveis
+
+---------------------------------------------
+-------------- COMANDOS SQL -----------------
+---------------------------------------------
+
+SiteContato->save() - Salva no banco
+SiteContato::all() - Obtém todos os registros
+SiteContato::find() - Encontra pelo ID
+SiteContato::where('site_contato', '=', 8) - Condição de busca
+SiteContato::whereIn('data_updated', ['2022-10', '2022-11']) - Busca IN
+SiteContato::whereNotIn('data_updated', ['2022-10', '2022-11']) - Busca NOT IN
+SiteContato::whereBetween('data_updated', ['2022-10', '2022-11']) - Busca BETWEEN
+SiteContato::whereNotBetween('data_updated', ['2022-10', '2022-11']) - Busca NOT BETWEEN
+SiteContato::whereNotBetween('data_updated', ['2022-10', '2022-11'])->where('nome', '<>', 'Douglinhas') - Junta duas condições com AND
+SiteContato::whereNotBetween('data_updated', ['2022-10', '2022-11'])->orWhere('nome', '<>', 'Douglinhas') - Junta duas condições com OR
+SiteContato::whereNull('data_updated') - Busca onde o campo for nulo
+SiteContato::whereDate('data_updated', '2020-08-09') - Seleciona registros de uma data específica
+SiteContato::whereDay/whereMonth/whereYear('data_updated', '09') - Seleciona registros de uma data específica
+SiteContato::whereTime('data_updated', '=', '22:17:09') - Seleciona registros de um horário específico
+SiteContato::whereColumn('data_updated', '=', 'data_created') - Seleciona registros cujas colunas possuem valores iguais
+SiteContato::orderBy('nome', 'asc') - Ordenando registros
+
+# Construindo query utilizando callback function. Cada callback function equivale a um subgrupo no MySQL
+SiteContato::where(function($query){ $query->where('nome', 'Jorge')->orWhere('nome', 'Ana'); })->where(function($query){ $query->whereIn('motivo_contato', [1,2])->orWhereBetween('id',[4,6]); })->get()
+
+# Recuperando registros apagados com Soft Delete
+Fornecedor::withTrashed() - Recupera todos os registros, incluindo os apagados
+Fornecedor::onlyTrashed() - Recupera somente os registros apagados
+Fornecedor::find()-restore() - Reativa o registro apagado
+
+OBS: TODOS OS COMANDOS PRECISAM SER SEGUIDOS PELO ->get()
+
+################################################
+############ COLLECTIONS #######################
+################################################
+
+$contatos = SiteContato::all()->get();
+
+$contatos->first() - Retorna o primeiro
+$contatos->last() - Retorna o último
+$contatos->reverse() - Reverte o array
+$contatos->toArray() - Converte para Array
+$contatos->toJson() - Converte para JSON
+SiteContato::all()->pluck('email', 'nome'); - Retorna um array contendo o Nome no Ìndice e o email nos valores
+$contato->fill(['nome'=>'douglinhas','email'=>'douglinhas.com']); - Preenche os atributos FILLABLE com os valores do array
+$contato->update(['nome'=>'douglinhas']); - Atualiza registros
+$contato->delete();/SiteContato::where(x)->delete() - Deleta registros
